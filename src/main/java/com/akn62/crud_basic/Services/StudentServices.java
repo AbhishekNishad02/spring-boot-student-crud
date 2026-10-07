@@ -14,8 +14,7 @@ public class StudentServices {
 
 
     public Student createstudent(Student studentreq){
-        Student std = studentRepo.Savestd(studentreq);
-
+        Student std = studentRepo.save(studentreq);
         return std;
     }
 }
