@@ -17,6 +17,19 @@ public class StudentServices {
 
 
     public Student createstudent(Student studentreq){
+         if(studentRepo.count() >= 10){
+             throw new RuntimeException("Maximum 8 student allowed ");
+         }
+        if (studentreq.getAge() <= 17 || studentreq.getAge() >= 60) {
+            throw new IllegalArgumentException("Age must be greater than 17 and less than 60");
+        }
+         if(studentreq.getRoll() > 999){
+             throw new RuntimeException("Roll number is Incorrect");
+         }
+         String s=studentreq.getEmail();
+         if(!s.contains("@")){
+             throw new RuntimeException("Enter valid email");
+         }
          studentreq.setDeleted(false);
         Student std = studentRepo.save(studentreq);
         return std;
@@ -40,11 +53,11 @@ public class StudentServices {
      }
   Student savestd=studentreq.get();
 
-     savestd.setName(student.getName());
-     savestd.setEmail(student.getEmail());
-     savestd.setRoll(student.getRoll());
-    savestd.setAge(student.getAge());
-    savestd.setSubject(student.getSubject());
+      if(student.getName() !=null) savestd.setName(student.getName());
+     if(student.getEmail() != null)savestd.setEmail(student.getEmail());
+     if(student.getRoll() != null) savestd.setRoll(student.getRoll());
+    if(student.getAge() != null)savestd.setAge(student.getAge());
+    if(student.getSubject() != null)savestd.setSubject(student.getSubject());
     savestd.setDeleted(false);
     return studentRepo.save(savestd);
  }

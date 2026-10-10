@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/std")
@@ -27,8 +26,8 @@ public class StudentController {
  }
 
 
- @GetMapping("/get/{id}")
- public ResponseEntity<Student> getstudent(@PathVariable long id){
+ @GetMapping("/get")
+ public ResponseEntity<Student> getstudent(@RequestParam long id){
      Student studentreq=studentServices.getstudent(id);
      if(studentreq==null){
          return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -47,8 +46,8 @@ public class StudentController {
 
 }
 
-@PutMapping("/update/{id}")
-    public ResponseEntity<Student> update(@PathVariable long id, @RequestBody Student student){
+@PutMapping("/update")
+    public ResponseEntity<Student> update(@RequestParam long id, @RequestBody Student student){
   Student std=studentServices.updatestd(id,student);
     if(std==null){
      return  ResponseEntity.notFound().build();
@@ -56,16 +55,16 @@ public class StudentController {
     return ResponseEntity.status(HttpStatus.OK).body(std);
 }
 
-@DeleteMapping("/delete/{id}")
-    public ResponseEntity <String> delete(@PathVariable long id) {
+@DeleteMapping("/delete")
+    public ResponseEntity <String> delete(@RequestParam long id) {
    Boolean deletestd = studentServices.deletestudent(id);
     if(!deletestd){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
     return ResponseEntity.ok("Record deleted successfully");
 }
- @PatchMapping("/soft-delete/{id}")
-public  ResponseEntity<String> softdelete(@PathVariable long id){
+ @PatchMapping("/soft-delete")
+public  ResponseEntity<String> softdelete(@RequestParam long id){
     Boolean deletestdsoft = studentServices.deletestudentsoft(id);
     if(!deletestdsoft){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

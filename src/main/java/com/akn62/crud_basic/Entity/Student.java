@@ -20,8 +20,8 @@ public class Student {
 
         private String name;
         private String email;
-        private int age;
-        private int roll;
+        private Integer age;
+        private Integer roll;
         private String subject;
         private Boolean deleted;
 }
