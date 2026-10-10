@@ -17,23 +17,24 @@ public class StudentServices {
 
 
     public Student createstudent(Student studentreq){
+         studentreq.setDeleted(false);
         Student std = studentRepo.save(studentreq);
         return std;
     }
  public Student getstudent(long id){
-     Optional<Student> student=studentRepo.findById(id);
+     Optional<Student> student=studentRepo.findByIdAndDeletedIsFalse(id);
      if(student.isPresent()){
          return student.get();
      }
          return null;
  }
  public List<Student> getAllstudent(){
-       List<Student> stlist  =studentRepo.findAll();
-       return stlist;
+       List<Student> stdlist  =studentRepo.findByDeletedIsFalse();
+       return stdlist;
  }
 
  public Student updatestd(long id, Student student){
-     Optional<Student> studentreq=studentRepo.findById(id);
+     Optional<Student> studentreq=studentRepo.findByIdAndDeletedIsFalse(id);
      if (studentreq.isEmpty()){
          return null;
      }
@@ -44,6 +45,7 @@ public class StudentServices {
      savestd.setRoll(student.getRoll());
     savestd.setAge(student.getAge());
     savestd.setSubject(student.getSubject());
+    savestd.setDeleted(false);
     return studentRepo.save(savestd);
  }
 
@@ -52,5 +54,15 @@ public class StudentServices {
    if(!isstd) return false;
  studentRepo.deleteById(id);
   return true;
+ }
+ public Boolean deletestudentsoft(long id){
+     Optional<Student> exitstudent=studentRepo.findByIdAndDeletedIsFalse(id);
+     if(exitstudent.isEmpty()){
+         return false;
+     }
+     Student st=exitstudent.get();
+     st.setDeleted(true);
+     studentRepo.save(st);
+     return true;
  }
 }

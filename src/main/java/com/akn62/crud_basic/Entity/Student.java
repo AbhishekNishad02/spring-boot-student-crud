@@ -23,4 +23,5 @@ public class Student {
         private int age;
         private int roll;
         private String subject;
+        private Boolean deleted;
 }
