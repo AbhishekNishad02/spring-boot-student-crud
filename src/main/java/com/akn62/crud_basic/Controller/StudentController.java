@@ -3,6 +3,9 @@ package com.akn62.crud_basic.Controller;
 
 import com.akn62.crud_basic.Entity.Student;
 import com.akn62.crud_basic.Services.StudentServices;
+import com.akn62.crud_basic.dto.StdRequestDto;
+import com.akn62.crud_basic.dto.StdresponseDto;
+import com.akn62.crud_basic.dto.Upstdresponsedto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,16 +22,16 @@ public class StudentController {
     }
 
 @PostMapping("create")
- public ResponseEntity<Student> create(@RequestBody Student student){
-   Student createstd= studentServices.createstudent(student);
+ public ResponseEntity<StdresponseDto> create(@RequestBody StdRequestDto studentdto){
+   StdresponseDto createstd= studentServices.createstudent(studentdto);
    return ResponseEntity
            .status(HttpStatus.CREATED).body(createstd);
  }
 
 
  @GetMapping("/get")
- public ResponseEntity<Student> getstudent(@RequestParam long id){
-     Student studentreq=studentServices.getstudent(id);
+ public ResponseEntity<StdresponseDto> getstudent(@RequestParam long id){
+     StdresponseDto studentreq=studentServices.getstudent(id);
      if(studentreq==null){
          return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
      }
@@ -37,8 +40,8 @@ public class StudentController {
 
 
 @GetMapping("/getall")
-  public ResponseEntity<List<Student>> getallstd() {
-    List<Student> stdlist = studentServices.getAllstudent();
+  public ResponseEntity<List<StdresponseDto>> getallstd() {
+    List<StdresponseDto> stdlist = studentServices.getAllstudent();
     if (stdlist.isEmpty()) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
@@ -47,8 +50,8 @@ public class StudentController {
 }
 
 @PutMapping("/update")
-    public ResponseEntity<Student> update(@RequestParam long id, @RequestBody Student student){
-  Student std=studentServices.updatestd(id,student);
+    public ResponseEntity<Upstdresponsedto> update(@RequestParam long id, @RequestBody Upstdresponsedto student){
+  Upstdresponsedto std=studentServices.updatestd(id,student);
     if(std==null){
      return  ResponseEntity.notFound().build();
      }

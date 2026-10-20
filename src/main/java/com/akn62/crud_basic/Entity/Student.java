@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,4 +26,6 @@ public class Student {
         private Integer roll;
         private String subject;
         private Boolean deleted;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
 }

@@ -2,8 +2,12 @@ package com.akn62.crud_basic.Services;
 
 import com.akn62.crud_basic.Entity.Student;
 import com.akn62.crud_basic.Repository.StudentRepo;
+import com.akn62.crud_basic.dto.StdRequestDto;
+import com.akn62.crud_basic.dto.StdresponseDto;
+import com.akn62.crud_basic.dto.Upstdresponsedto;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,50 +20,43 @@ public class StudentServices {
      }
 
 
-    public Student createstudent(Student studentreq){
-         if(studentRepo.count() >= 10){
-             throw new RuntimeException("Maximum 8 student allowed ");
-         }
-        if (studentreq.getAge() <= 17 || studentreq.getAge() >= 60) {
-            throw new IllegalArgumentException("Age must be greater than 17 and less than 60");
+    public StdresponseDto createstudent(StdRequestDto studentreq){
+         Student student=mapToEntity(studentreq);
+        if(studentRepo.count() >= 2){
+            throw new RuntimeException("Maximum 2 student allowed ");
         }
-         if(studentreq.getRoll() > 999){
-             throw new RuntimeException("Roll number is Incorrect");
-         }
-         String s=studentreq.getEmail();
-         if(!s.contains("@")){
-             throw new RuntimeException("Enter valid email");
-         }
-         studentreq.setDeleted(false);
-        Student std = studentRepo.save(studentreq);
-        return std;
+         student.setCreatedAt(LocalDateTime.now());
+         student.setUpdatedAt(LocalDateTime.now());
+         Student stdreq=studentRepo.save(student);
+         return mapToDto(stdreq);
     }
- public Student getstudent(long id){
+ public StdresponseDto getstudent(long id){
      Optional<Student> student=studentRepo.findByIdAndDeletedIsFalse(id);
      if(student.isPresent()){
-         return student.get();
+         return mapToDto(student.get());
      }
          return null;
  }
- public List<Student> getAllstudent(){
+ public List<StdresponseDto> getAllstudent(){
        List<Student> stdlist  =studentRepo.findByDeletedIsFalse();
-       return stdlist;
+       return stdlist.stream()
+               .map(this ::mapToDto)
+               .toList();
  }
 
- public Student updatestd(long id, Student student){
+ public Upstdresponsedto updatestd(long id, Upstdresponsedto student){
      Optional<Student> studentreq=studentRepo.findByIdAndDeletedIsFalse(id);
      if (studentreq.isEmpty()){
          return null;
      }
-  Student savestd=studentreq.get();
-
+     Student savestd=studentreq.get();
       if(student.getName() !=null) savestd.setName(student.getName());
-     if(student.getEmail() != null)savestd.setEmail(student.getEmail());
-     if(student.getRoll() != null) savestd.setRoll(student.getRoll());
-    if(student.getAge() != null)savestd.setAge(student.getAge());
-    if(student.getSubject() != null)savestd.setSubject(student.getSubject());
-    savestd.setDeleted(false);
-    return studentRepo.save(savestd);
+      if(student.getRoll() != null) savestd.setRoll(student.getRoll());
+      if(student.getAge() != null)savestd.setAge(student.getAge());
+      if(student.getSubject() != null)savestd.setSubject(student.getSubject());
+      savestd.setUpdatedAt(LocalDateTime.now());
+    Student saved= studentRepo.save(savestd);
+    return mapToUpdateDto(saved);
  }
 
  public Boolean deletestudent(long id){
@@ -77,5 +74,51 @@ public class StudentServices {
      st.setDeleted(true);
      studentRepo.save(st);
      return true;
+ }
+ private  Student mapToEntity(StdRequestDto std){
+         Student s1=new Student();
+         s1.setName(std.getName());
+         s1.setAge(std.getAge());
+         s1.setEmail(std.getEmail());
+         s1.setRoll(std.getRoll());
+         s1.setSubject(std.getSubject());
+         s1.setDeleted(false);
+
+     if (s1.getAge() <= 17 || s1.getAge() >= 60) {
+         throw new IllegalArgumentException("Age must be greater than 17 and less than 60");
+     }
+     if(s1.getRoll() > 999){
+         throw new RuntimeException("Roll number is Incorrect");
+     }
+     String s=s1.getEmail();
+     if(!s.contains("@")){
+         throw new RuntimeException("Enter valid email");
+     }
+         return s1;
+ }
+ private StdresponseDto mapToDto(Student std){
+         StdresponseDto s1=new StdresponseDto();
+         s1.setId(std.getId());
+         s1.setName(std.getName());
+         s1.setEmail(std.getEmail());
+         s1.setRoll(std.getRoll());
+         s1.setSubject(std.getSubject());
+         s1.setAge(std.getAge());
+         s1.setMsg("Student Saved Successfully...");
+         s1.setCreate(std.getCreatedAt());
+         s1.setUpdate(std.getUpdatedAt());
+         return s1;
+ }
+ private Upstdresponsedto mapToUpdateDto(Student std){
+         Upstdresponsedto s1=new Upstdresponsedto();
+       s1.setId(std.getId());
+       s1.setName(std.getName());
+       s1.setEmail(std.getEmail());
+       s1.setRoll(std.getRoll());
+       s1.setSubject(std.getSubject());
+       s1.setAge(std.getAge());
+       s1.setMsg("Student Updated Successfully...");
+       s1.setUpdate(std.getUpdatedAt());
+     return s1;
  }
 }
