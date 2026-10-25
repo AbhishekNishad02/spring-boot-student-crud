@@ -6,6 +6,7 @@ import com.akn62.crud_basic.Services.StudentServices;
 import com.akn62.crud_basic.dto.StdRequestDto;
 import com.akn62.crud_basic.dto.StdresponseDto;
 import com.akn62.crud_basic.dto.Upstdresponsedto;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,57 +22,46 @@ public class StudentController {
         this.studentServices= studentServices ;
     }
 
-@PostMapping("create")
- public ResponseEntity<StdresponseDto> create(@RequestBody StdRequestDto studentdto){
+@PostMapping
+ public ResponseEntity<StdresponseDto> create( @Valid  @RequestBody StdRequestDto studentdto){
    StdresponseDto createstd= studentServices.createstudent(studentdto);
    return ResponseEntity
            .status(HttpStatus.CREATED).body(createstd);
  }
 
 
- @GetMapping("/get")
- public ResponseEntity<StdresponseDto> getstudent(@RequestParam long id){
+ @GetMapping("/{id}")
+ public ResponseEntity<StdresponseDto> getstudent(@PathVariable long id){
      StdresponseDto studentreq=studentServices.getstudent(id);
-     if(studentreq==null){
-         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-     }
-     return ResponseEntity.status(HttpStatus.OK).body(studentreq);
+     return ResponseEntity.ok().body(studentreq);
  }
 
 
-@GetMapping("/getall")
+@GetMapping
   public ResponseEntity<List<StdresponseDto>> getallstd() {
     List<StdresponseDto> stdlist = studentServices.getAllstudent();
-    if (stdlist.isEmpty()) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
     return ResponseEntity.ok().body(stdlist);
 
 }
 
-@PutMapping("/update")
+@PutMapping
     public ResponseEntity<Upstdresponsedto> update(@RequestParam long id, @RequestBody Upstdresponsedto student){
-  Upstdresponsedto std=studentServices.updatestd(id,student);
-    if(std==null){
-     return  ResponseEntity.notFound().build();
-     }
-    return ResponseEntity.status(HttpStatus.OK).body(std);
+        if(student.getEmail() != null){
+            return ResponseEntity.badRequest().build();
+        }
+    Upstdresponsedto std=studentServices.updatestd(id,student);
+     return ResponseEntity.status(HttpStatus.OK).body(std);
 }
 
-@DeleteMapping("/delete")
-    public ResponseEntity <String> delete(@RequestParam long id) {
-   Boolean deletestd = studentServices.deletestudent(id);
-    if(!deletestd){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-    return ResponseEntity.ok("Record deleted successfully");
+@DeleteMapping("/{id}")
+    public ResponseEntity <String> delete(@PathVariable long id) {
+    studentServices.deletestudent(id);
+    return ResponseEntity.noContent().build();
 }
+
  @PatchMapping("/soft-delete")
 public  ResponseEntity<String> softdelete(@RequestParam long id){
-    Boolean deletestdsoft = studentServices.deletestudentsoft(id);
-    if(!deletestdsoft){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-    return ResponseEntity.ok("Record deleted successfully");
+     studentServices.deletestudentsoft(id);
+    return ResponseEntity.noContent().build();
 }
 }
